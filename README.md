@@ -12,9 +12,17 @@ reminder cron for the final 7 days before a document expires.
 3. Copy `.env.example` to `.env.local` and fill in:
    - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from your
      Supabase project settings
+   - `NEXT_PUBLIC_SITE_URL` — the deployed app URL (e.g.
+     `http://localhost:3000` for local dev, or your production domain)
    - `SUPABASE_SERVICE_ROLE_KEY` — from Supabase project settings (server-only,
      never expose to the client)
    - `RESEND_API_KEY` — from resend.com
+   - `EMAIL_FROM` — the sender address for expiry reminder emails, e.g.
+     `Document Vault <reminders@yourdomain.com>`. This must be a domain
+     verified for sending in your Resend account, or emails to real
+     recipients will not be delivered. If unset, falls back to
+     `reminders@resend.dev`, Resend's shared test sender, which only
+     delivers to your own Resend-account email during local development.
    - `CRON_SECRET` — any random string; also set it as the `Authorization:
      Bearer <secret>` header Vercel Cron sends (Vercel adds this automatically
      for its own cron invocations; set it manually when testing locally)

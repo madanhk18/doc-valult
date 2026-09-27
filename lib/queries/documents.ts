@@ -60,3 +60,17 @@ export async function getSignedFileUrl(filePath: string): Promise<string> {
   if (error || !data) throw new Error(error?.message ?? "Could not create signed URL");
   return data.signedUrl;
 }
+
+// A separate signed URL flagged for download. Supabase Storage signed URLs are
+// cross-origin, and browsers ignore the HTML `download` attribute on
+// cross-origin links, so a real "Save As" download requires the storage API's
+// own `download` option (which sets Content-Disposition: attachment).
+export async function getSignedDownloadUrl(filePath: string): Promise<string> {
+  const supabase = await createClient();
+  const { data, error } = await supabase.storage
+    .from("documents")
+    .createSignedUrl(filePath, 60 * 10, { download: true });
+
+  if (error || !data) throw new Error(error?.message ?? "Could not create signed download URL");
+  return data.signedUrl;
+}

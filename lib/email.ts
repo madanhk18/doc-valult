@@ -37,7 +37,7 @@ export async function sendExpiryReminderEmail(params: {
 }): Promise<{ success: boolean; error?: string }> {
   try {
     const { error } = await getResendClient().emails.send({
-      from: "Document Vault <reminders@resend.dev>",
+      from: process.env.EMAIL_FROM || "Document Vault <reminders@resend.dev>",
       to: params.to,
       subject: subjectFor(params.daysRemaining, params.documentName),
       text: bodyFor(params),

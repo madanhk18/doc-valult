@@ -17,9 +17,11 @@ import { archiveDocument, deleteDocument } from "@/lib/actions/documents";
 export function DocumentActions({
   id,
   fileUrl,
+  downloadUrl,
 }: {
   id: string;
   fileUrl: string;
+  downloadUrl: string;
 }) {
   const [isPending, startTransition] = useTransition();
 
@@ -38,7 +40,7 @@ export function DocumentActions({
         variant="outline"
         size="sm"
         render={
-          <a href={fileUrl} download>
+          <a href={downloadUrl} download>
             Download
           </a>
         }

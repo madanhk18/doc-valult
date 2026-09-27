@@ -1,6 +1,6 @@
 "use client";
 
-import { useTransition } from "react";
+import { useTransition, type FormEvent } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -11,16 +11,23 @@ import type { RecipientRow } from "@/lib/queries/recipients";
 export function RecipientsForm({ recipients }: { recipients: RecipientRow[] }) {
   const [isPending, startTransition] = useTransition();
 
-  function handleAdd(formData: FormData) {
+  function handleAdd(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const formData = new FormData(form);
     startTransition(async () => {
       const result = await addRecipient(formData);
-      if (result?.error) toast.error(result.error);
+      if (result?.error) {
+        toast.error(result.error);
+      } else {
+        form.reset();
+      }
     });
   }
 
   return (
     <div className="space-y-4">
-      <form action={handleAdd} className="flex gap-2">
+      <form onSubmit={handleAdd} className="flex gap-2">
         <Input name="email" type="email" placeholder="name@example.com" required className="max-w-xs" />
         <Button type="submit" disabled={isPending}>Add</Button>
       </form>

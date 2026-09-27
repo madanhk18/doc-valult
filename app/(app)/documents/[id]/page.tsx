@@ -1,9 +1,21 @@
 import { notFound } from "next/navigation";
 import { format } from "date-fns";
-import { getDocumentById, getSignedFileUrl } from "@/lib/queries/documents";
+import { getDocumentById, getSignedFileUrl, getSignedDownloadUrl } from "@/lib/queries/documents";
 import { StatusBadge } from "@/components/documents/status-badge";
 import { DocumentActions } from "@/components/documents/document-actions";
 import { Card, CardContent } from "@/components/ui/card";
+
+// The original extension is preserved when the file is uploaded (see
+// filePath construction in lib/actions/documents.ts: `${user.id}/${uuid}-${file.name}`),
+// so we can infer a preview kind from it without storing a separate mime-type column.
+type PreviewKind = "image" | "pdf" | null;
+
+function getPreviewKind(filePath: string): PreviewKind {
+  const extension = filePath.split(".").pop()?.toLowerCase() ?? "";
+  if (["jpg", "jpeg", "png"].includes(extension)) return "image";
+  if (extension === "pdf") return "pdf";
+  return null;
+}
 
 export default async function DocumentDetailPage({
   params,
@@ -14,7 +26,11 @@ export default async function DocumentDetailPage({
   const document = await getDocumentById(id);
   if (!document) notFound();
 
-  const fileUrl = await getSignedFileUrl(document.file_path);
+  const [fileUrl, downloadUrl] = await Promise.all([
+    getSignedFileUrl(document.file_path),
+    getSignedDownloadUrl(document.file_path),
+  ]);
+  const previewKind = getPreviewKind(document.file_path);
 
   return (
     <div className="max-w-2xl space-y-6">
@@ -46,7 +62,28 @@ export default async function DocumentDetailPage({
         </CardContent>
       </Card>
 
-      <DocumentActions id={document.id} fileUrl={fileUrl} />
+      {previewKind && (
+        <Card>
+          <CardContent className="p-4">
+            {previewKind === "image" ? (
+              // eslint-disable-next-line @next/next/no-img-element -- signed URL, not an optimizable static asset
+              <img
+                src={fileUrl}
+                alt={document.name}
+                className="max-h-[70vh] w-full rounded-md object-contain"
+              />
+            ) : (
+              <iframe
+                src={fileUrl}
+                title={document.name}
+                className="h-[70vh] w-full rounded-md border border-border"
+              />
+            )}
+          </CardContent>
+        </Card>
+      )}
+
+      <DocumentActions id={document.id} fileUrl={fileUrl} downloadUrl={downloadUrl} />
     </div>
   );
 }

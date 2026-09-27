@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 import { DOCUMENT_TYPES, ACCEPTED_FILE_TYPES, MAX_FILE_SIZE_BYTES } from "@/lib/constants";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,8 @@ import {
 import { toast } from "sonner";
 import type { DocumentWithStatus } from "@/lib/queries/documents";
 
+const CUSTOM_TYPE = DOCUMENT_TYPES[DOCUMENT_TYPES.length - 1];
+
 type Props = {
   action: (formData: FormData) => Promise<{ error?: string } | void>;
   initialValues?: Partial<DocumentWithStatus>;
@@ -23,7 +25,15 @@ type Props = {
 };
 
 export function DocumentForm({ action, initialValues, requireFile = true }: Props) {
+  const initialType = initialValues?.type;
+  const isInitialCustom = Boolean(
+    initialType && !(DOCUMENT_TYPES as readonly string[]).includes(initialType)
+  );
+
   const [fileError, setFileError] = useState<string | null>(null);
+  const [selectedType, setSelectedType] = useState<string>(
+    isInitialCustom ? CUSTOM_TYPE : (initialType ?? "")
+  );
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
 
@@ -36,7 +46,10 @@ export function DocumentForm({ action, initialValues, requireFile = true }: Prop
     return null;
   }
 
-  function handleSubmit(formData: FormData) {
+  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
     const file = formData.get("file") as File | null;
     const error = validateFile(file && file.size > 0 ? file : undefined);
     if (error) {
@@ -45,6 +58,15 @@ export function DocumentForm({ action, initialValues, requireFile = true }: Prop
     }
     setFileError(null);
 
+    if (formData.get("type") === CUSTOM_TYPE) {
+      const customType = (formData.get("customType")?.toString() ?? "").trim();
+      if (!customType) {
+        toast.error("Custom document type name is required");
+        return;
+      }
+      formData.set("type", customType);
+    }
+
     startTransition(async () => {
       const result = await action(formData);
       if (result?.error) toast.error(result.error);
@@ -52,7 +74,7 @@ export function DocumentForm({ action, initialValues, requireFile = true }: Prop
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-4 max-w-xl">
+    <form ref={formRef} onSubmit={handleSubmit} className="space-y-4 max-w-xl">
       {requireFile && (
         <div className="space-y-2">
           <Label htmlFor="file">Document file (PDF, JPG, PNG — max 10MB)</Label>
@@ -68,7 +90,7 @@ export function DocumentForm({ action, initialValues, requireFile = true }: Prop
 
       <div className="space-y-2">
         <Label htmlFor="type">Document Type</Label>
-        <Select name="type" defaultValue={initialValues?.type}>
+        <Select name="type" value={selectedType} onValueChange={(value) => setSelectedType(value as string)}>
           <SelectTrigger id="type">
             <SelectValue placeholder="Select a type" />
           </SelectTrigger>
@@ -79,6 +101,19 @@ export function DocumentForm({ action, initialValues, requireFile = true }: Prop
           </SelectContent>
         </Select>
       </div>
+
+      {selectedType === CUSTOM_TYPE && (
+        <div className="space-y-2">
+          <Label htmlFor="customType">Custom Type Name</Label>
+          <Input
+            id="customType"
+            name="customType"
+            defaultValue={isInitialCustom ? initialType : ""}
+            placeholder="Name your document type"
+            required
+          />
+        </div>
+      )}
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="space-y-2">
