@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Document Vault
 
-## Getting Started
+Digital document locker + expiry reminder system. Phase 1 MVP: auth, document
+upload with metadata, dashboard with expiry status, and a daily email
+reminder cron for the final 7 days before a document expires.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. `npm install`
+2. Create a Supabase project. Run `supabase/migrations/0001_init.sql` against
+   it (via `supabase db push` or the SQL editor).
+3. Copy `.env.example` to `.env.local` and fill in:
+   - `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY` — from your
+     Supabase project settings
+   - `SUPABASE_SERVICE_ROLE_KEY` — from Supabase project settings (server-only,
+     never expose to the client)
+   - `RESEND_API_KEY` — from resend.com
+   - `CRON_SECRET` — any random string; also set it as the `Authorization:
+     Bearer <secret>` header Vercel Cron sends (Vercel adds this automatically
+     for its own cron invocations; set it manually when testing locally)
+4. `npm run dev`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Testing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `npm test` runs the expiry status unit tests.
+- Manual smoke test: register, add a document with an expiry date 3 days out,
+  add yourself as a notification recipient in Settings, then call
+  `curl -H "Authorization: Bearer $CRON_SECRET" http://localhost:3000/api/cron/check-expiries`
+  and confirm you receive one email and a row appears in `notification_logs`.
+  Call it again and confirm no duplicate email is sent.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deferred to later phases
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+OCR/scan extraction, SMS reminders, document sharing, renewal/version
+history, Google Drive integration.
