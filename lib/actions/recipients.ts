@@ -5,6 +5,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 
 const emailSchema = z.string().trim().email("Enter a valid email");
+const MAX_RECIPIENTS = 10;
 
 export async function addRecipient(formData: FormData): Promise<{ error?: string }> {
   const parsed = emailSchema.safeParse(formData.get("email"));
@@ -15,6 +16,11 @@ export async function addRecipient(formData: FormData): Promise<{ error?: string
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) return { error: "Not authenticated" };
+
+  const { count } = await supabase
+    .from("notification_recipients")
+    .select("id", { count: "exact", head: true });
+  if ((count ?? 0) >= MAX_RECIPIENTS) return { error: `You can add up to ${MAX_RECIPIENTS} people` };
 
   const { error } = await supabase
     .from("notification_recipients")

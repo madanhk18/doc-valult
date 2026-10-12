@@ -32,7 +32,7 @@ export function AuthForm({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
-        <Input id="email" name="email" type="email" required />
+        <Input id="email" name="email" type="email" autoComplete="email" placeholder="you@example.com" required />
       </div>
       <div className="space-y-2">
         <Label htmlFor="password">Password</Label>
@@ -40,12 +40,14 @@ export function AuthForm({
           id="password"
           name="password"
           type="password"
+          autoComplete={passwordMinLength ? "new-password" : "current-password"}
+          placeholder="At least 8 characters"
           minLength={passwordMinLength}
           required
         />
       </div>
-      <Button type="submit" className="w-full" disabled={isPending}>
-        {submitLabel}
+      <Button type="submit" variant="brand" size="lg" className="w-full" disabled={isPending}>
+        {isPending ? "Please wait…" : submitLabel}
       </Button>
     </form>
   );

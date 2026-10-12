@@ -2,6 +2,7 @@ import { notFound } from "next/navigation";
 import { getDocumentById } from "@/lib/queries/documents";
 import { updateDocument } from "@/lib/actions/documents";
 import { DocumentForm } from "@/components/documents/document-form";
+import { PageTitle } from "@/components/shared/page-title";
 
 export default async function EditDocumentPage({
   params,
@@ -15,8 +16,10 @@ export default async function EditDocumentPage({
   const updateWithId = updateDocument.bind(null, id);
 
   return (
-    <div>
-      <h1 className="mb-6 text-xl font-semibold">Edit Document</h1>
+    <div className="space-y-5">
+      <div className="mx-auto max-w-xl">
+        <PageTitle title="Edit document" />
+      </div>
       <DocumentForm action={updateWithId} initialValues={document} requireFile={false} />
     </div>
   );

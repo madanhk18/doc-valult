@@ -1,6 +1,11 @@
+import Link from "next/link";
+import { FileSearch, FolderPlus, Plus } from "lucide-react";
 import { getDocuments } from "@/lib/queries/documents";
 import { DocumentCard } from "@/components/documents/document-card";
 import { DocumentFilters } from "@/components/documents/document-filters";
+import { EmptyState } from "@/components/shared/empty-state";
+import { PageTitle } from "@/components/shared/page-title";
+import { Button } from "@/components/ui/button";
 
 export default async function DocumentsPage({
   searchParams,
@@ -37,13 +42,33 @@ export default async function DocumentsPage({
   });
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-xl font-semibold">My Documents</h1>
+    <div className="space-y-5">
+      <PageTitle
+        title="Documents"
+        subtitle={`${documents.length} stored`}
+        action={
+          <Button variant="brand" className="hidden md:inline-flex" render={<Link href="/documents/new" />}>
+            <Plus className="size-4" />
+            Add document
+          </Button>
+        }
+      />
       <DocumentFilters />
-      {filtered.length === 0 ? (
-        <p className="text-sm text-muted-foreground">No documents match.</p>
+      {documents.length === 0 ? (
+        <EmptyState
+          icon={FolderPlus}
+          title="No documents yet"
+          description="Snap a photo or upload a PDF — it takes under a minute."
+          action={
+            <Button variant="brand" render={<Link href="/documents/new" />}>
+              Add document
+            </Button>
+          }
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState icon={FileSearch} title="Nothing matches" description="Try another search or filter." />
       ) : (
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {filtered.map((doc) => (
             <DocumentCard key={doc.id} document={doc} />
           ))}
