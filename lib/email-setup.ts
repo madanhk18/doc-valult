@@ -6,6 +6,8 @@ export type EmailSetupCheck = {
   label: string;
   /** What to do when it isn't ok. */
   fix: string;
+  /** Not needed for reminders to reach the Resend sign-up email. */
+  optional?: boolean;
 };
 
 /**
@@ -24,8 +26,9 @@ export function getEmailSetupChecks(): EmailSetupCheck[] {
     {
       id: "sender",
       ok: Boolean(from) && from !== FALLBACK_SENDER && !from.includes("resend.dev"),
-      label: "Sender address on your own domain",
-      fix: "Verify a domain at resend.com/domains, then set EMAIL_FROM, e.g. Document Vault <reminders@yourdomain.com>. Without it, mail only reaches your Resend sign-up email.",
+      label: "Own domain for sending (optional)",
+      fix: "Without a domain, reminders only reach the email you signed up to Resend with. To remind other people, verify a domain at resend.com/domains and set EMAIL_FROM, e.g. Document Vault <reminders@yourdomain.com>.",
+      optional: true,
     },
     {
       id: "service",

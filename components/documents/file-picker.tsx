@@ -94,7 +94,7 @@ export function FilePicker({ name, error }: { name: string; error?: string | nul
           </>
         ) : (
           <>
-            <span className="grid size-16 place-items-center rounded-3xl bg-brand text-white shadow-lg">
+            <span className="grid size-16 place-items-center rounded-3xl bg-primary/10 text-primary">
               <Camera className="size-8" />
             </span>
             <div>

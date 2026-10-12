@@ -66,7 +66,7 @@ Changes:
 
 ## 4. New look
 
-- Indigo/violet primary, gradient hero, dark mode via `next-themes` (light / dark /
+- Navy/blue professional palette (no violet or pink), navy gradient hero, dark mode via `next-themes` (light / dark /
   system toggle in the top bar and Settings).
 - Each document type maps to an icon + colour (`lib/doc-style.ts`), shown as a
   tinted icon chip on every card and the detail header.

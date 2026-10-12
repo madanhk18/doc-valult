@@ -42,16 +42,15 @@ export default async function DashboardPage() {
       <InstallHint />
 
       <section className="relative overflow-hidden rounded-[28px] bg-brand p-6 text-white shadow-xl md:p-8">
-        <div className="pointer-events-none absolute -top-16 -right-16 size-56 rounded-full bg-white/15 blur-2xl" />
-        <div className="pointer-events-none absolute -bottom-20 -left-10 size-48 rounded-full bg-fuchsia-300/25 blur-2xl" />
-        <p className="relative text-sm font-medium text-white/80">Hi {firstName(data.user?.email)} 👋</p>
+        <div className="pointer-events-none absolute -top-20 -right-20 size-64 rounded-full bg-white/8 blur-2xl" />
+        <p className="relative text-sm font-medium text-white/75">Hi {firstName(data.user?.email)}</p>
         <p className="relative mt-3 text-5xl font-extrabold tracking-tight">{documents.length}</p>
         <p className="relative mt-1 text-white/85">
           document{documents.length === 1 ? "" : "s"} safe in your vault
         </p>
         <Button
           size="sm"
-          className="relative mt-5 bg-white text-[var(--brand-1)] hover:bg-white/90"
+          className="relative mt-5 bg-white text-[var(--brand-2)] hover:bg-white/90"
           render={<Link href="/documents/new" />}
         >
           <FolderPlus className="size-4" />

@@ -49,14 +49,14 @@ function htmlBody(params: ReminderEmailParams): string {
   const accent = urgent ? "#e5484d" : "#f59e0b";
   const headline = whenText(params.daysRemaining);
   const button = params.documentUrl
-    ? `<a href="${escapeHtml(params.documentUrl)}" style="display:inline-block;margin-top:20px;padding:12px 20px;border-radius:12px;background:#4f46e5;color:#ffffff;text-decoration:none;font-weight:600">Open in Document Vault</a>`
+    ? `<a href="${escapeHtml(params.documentUrl)}" style="display:inline-block;margin-top:20px;padding:12px 20px;border-radius:12px;background:#1d4ed8;color:#ffffff;text-decoration:none;font-weight:600">Open in Document Vault</a>`
     : "";
 
   return `<!doctype html>
 <html><body style="margin:0;background:#f4f4f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#18181b">
   <div style="max-width:480px;margin:0 auto;padding:24px 16px">
     <div style="border-radius:20px;overflow:hidden;background:#ffffff;box-shadow:0 1px 3px rgba(0,0,0,.08)">
-      <div style="padding:24px;background-color:#6d28d9;background-image:linear-gradient(135deg,#4f46e5,#9333ea);color:#ffffff">
+      <div style="padding:24px;background-color:#1e3a8a;background-image:linear-gradient(135deg,#1e3a8a,#1d4ed8);color:#ffffff">
         <div style="font-size:13px;opacity:.85">Document Vault reminder</div>
         <div style="margin-top:6px;font-size:22px;font-weight:700">${name}</div>
       </div>

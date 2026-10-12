@@ -13,7 +13,7 @@ export function EmptyState({
 }) {
   return (
     <div className="flex flex-col items-center gap-3 rounded-3xl border border-dashed border-border bg-card/60 px-6 py-12 text-center">
-      <span className="grid size-16 place-items-center rounded-3xl bg-brand text-white shadow-lg">
+      <span className="grid size-16 place-items-center rounded-3xl bg-primary/10 text-primary">
         <Icon className="size-8" strokeWidth={2} />
       </span>
       <div className="space-y-1">

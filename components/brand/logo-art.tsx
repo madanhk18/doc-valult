@@ -12,7 +12,7 @@ export function LogoArt({ size, rounded = true }: { size: number; rounded?: bool
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #4f46e5 0%, #7c3aed 55%, #c026d3 100%)",
+        background: "linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 100%)",
         borderRadius: rounded ? size * 0.22 : 0,
       }}
     >
@@ -22,7 +22,7 @@ export function LogoArt({ size, rounded = true }: { size: number; rounded?: bool
           fill="#ffffff"
           fillOpacity="0.95"
         />
-        <path d="m8.6 12.2 2.3 2.3 4.6-4.8" stroke="#6d28d9" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="m8.6 12.2 2.3 2.3 4.6-4.8" stroke="#1d4ed8" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
   );

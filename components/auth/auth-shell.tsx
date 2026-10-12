@@ -5,8 +5,7 @@ import { LogoArt } from "@/components/brand/logo-art";
 export function AuthShell({ title, subtitle, children }: { title: string; subtitle: string; children: React.ReactNode }) {
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-brand px-4 py-10">
-      <div className="pointer-events-none absolute -top-24 -left-24 size-80 rounded-full bg-white/15 blur-3xl" />
-      <div className="pointer-events-none absolute -right-24 -bottom-24 size-96 rounded-full bg-fuchsia-300/25 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-24 size-96 rounded-full bg-white/8 blur-3xl" />
 
       <div className="relative w-full max-w-sm">
         <div className="mb-6 flex flex-col items-center text-center text-white">

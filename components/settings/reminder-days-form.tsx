@@ -49,7 +49,7 @@ export function ReminderDaysForm({ initialDays, migrated }: { initialDays: numbe
               aria-pressed={active}
               className={cn(
                 "rounded-2xl border px-3 py-3 text-sm font-semibold transition-colors",
-                active ? "border-transparent bg-brand text-white shadow-md" : "border-border bg-card text-muted-foreground hover:bg-accent"
+                active ? "border-primary bg-primary text-primary-foreground shadow-sm" : "border-border bg-card text-muted-foreground hover:bg-accent"
               )}
             >
               {label(day)}

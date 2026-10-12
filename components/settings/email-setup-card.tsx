@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { CircleCheck, CircleX, RefreshCw, Send } from "lucide-react";
+import { CircleCheck, CircleX, Info, RefreshCw, Send } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { checkMyDocumentsNow, sendTestEmail } from "@/lib/actions/email";
@@ -12,7 +12,7 @@ type Outcome = { tone: "good" | "bad" | "info"; title: string; detail?: string }
 export function EmailSetupCard({ checks, email }: { checks: EmailSetupCheck[]; email: string }) {
   const [outcome, setOutcome] = useState<Outcome | null>(null);
   const [isPending, startTransition] = useTransition();
-  const allOk = checks.every((c) => c.ok);
+  const allOk = checks.every((c) => c.ok || c.optional);
 
   function test() {
     startTransition(async () => {
@@ -67,6 +67,8 @@ export function EmailSetupCard({ checks, email }: { checks: EmailSetupCheck[]; e
           <li key={c.id} className="flex gap-3 rounded-2xl bg-muted/60 p-3">
             {c.ok ? (
               <CircleCheck className="mt-0.5 size-5 shrink-0 text-success" />
+            ) : c.optional ? (
+              <Info className="mt-0.5 size-5 shrink-0 text-muted-foreground" />
             ) : (
               <CircleX className="mt-0.5 size-5 shrink-0 text-destructive" />
             )}

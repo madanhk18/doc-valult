@@ -19,7 +19,7 @@ export function BottomNav() {
         <Link
           href="/documents/new"
           aria-label="Add document"
-          className="-mt-8 grid size-14 place-items-center rounded-full bg-brand text-white shadow-lg ring-4 ring-background transition-transform active:scale-95"
+          className="-mt-8 grid size-14 place-items-center rounded-full bg-primary text-primary-foreground shadow-lg ring-4 ring-background transition-transform active:scale-95"
         >
           <Plus className="size-7" strokeWidth={2.6} />
         </Link>

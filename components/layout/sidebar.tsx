@@ -19,7 +19,7 @@ export function Sidebar() {
 
       <Link
         href="/documents/new"
-        className="mb-6 flex items-center justify-center gap-2 rounded-2xl bg-brand px-4 py-3 text-sm font-semibold text-white shadow-md transition-opacity hover:opacity-90"
+        className="mb-6 flex items-center justify-center gap-2 rounded-xl bg-primary px-4 py-3 text-sm font-semibold text-primary-foreground shadow-sm transition-colors hover:bg-primary/90"
       >
         <Plus className="size-4" strokeWidth={2.6} />
         Add document

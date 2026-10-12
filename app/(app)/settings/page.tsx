@@ -76,14 +76,14 @@ export default async function SettingsPage() {
         <RecipientsForm recipients={recipients} accountEmail={email} />
       </SettingsSection>
 
-      <SettingsSection icon={Palette} color="var(--brand-2)" title="Appearance">
+      <SettingsSection icon={Palette} color="var(--muted-foreground)" title="Appearance">
         <ThemePicker />
       </SettingsSection>
 
-      <SettingsSection icon={HardDrive} color="var(--brand-3)" title="Storage">
+      <SettingsSection icon={HardDrive} color="var(--info)" title="Storage">
         <div className="space-y-2">
           <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
-            <div className="h-full rounded-full bg-brand" style={{ width: `${Math.max(storagePercent, 1)}%` }} />
+            <div className="h-full rounded-full bg-primary" style={{ width: `${Math.max(storagePercent, 1)}%` }} />
           </div>
           <p className="text-sm text-muted-foreground">
             {formatBytes(storageUsedBytes)} of {formatBytes(DISPLAY_QUOTA_BYTES)} used
