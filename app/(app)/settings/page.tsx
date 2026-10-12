@@ -1,7 +1,15 @@
+import { BellRing, HardDrive, Mail, Palette, UserRound, Users } from "lucide-react";
 import { createClient } from "@/lib/supabase/server";
 import { getRecipients } from "@/lib/queries/recipients";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getReminderSettings } from "@/lib/queries/reminders";
+import { getEmailSetupChecks } from "@/lib/email-setup";
 import { RecipientsForm } from "@/components/settings/recipients-form";
+import { ReminderDaysForm } from "@/components/settings/reminder-days-form";
+import { EmailSetupCard } from "@/components/settings/email-setup-card";
+import { SettingsSection } from "@/components/settings/settings-section";
+import { ThemePicker } from "@/components/theme-toggle";
+import { LogoutButton } from "@/components/layout/logout-button";
+import { PageTitle } from "@/components/shared/page-title";
 
 // Fixed display quota per the spec — not a real Supabase Storage quota check.
 const DISPLAY_QUOTA_BYTES = 15 * 1024 * 1024 * 1024; // 15 GB
@@ -27,37 +35,65 @@ export default async function SettingsPage() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const [recipients, storageUsedBytes] = await Promise.all([
+  const [recipients, reminders, storageUsedBytes] = await Promise.all([
     getRecipients(),
+    getReminderSettings(),
     user ? getStorageUsageBytes(user.id) : Promise.resolve(0),
   ]);
+  const email = user?.email ?? "";
+  const storagePercent = Math.min(100, (storageUsedBytes / DISPLAY_QUOTA_BYTES) * 100);
 
   return (
-    <div className="max-w-2xl space-y-6">
-      <h1 className="text-xl font-semibold">Settings</h1>
+    <div className="mx-auto max-w-2xl space-y-4">
+      <PageTitle title="Settings" />
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Account</CardTitle></CardHeader>
-        <CardContent>
-          <p className="text-sm text-muted-foreground">Signed in as {user?.email}</p>
-        </CardContent>
-      </Card>
+      <SettingsSection
+        id="reminders"
+        icon={BellRing}
+        color="var(--warning)"
+        title="When to remind me"
+        description="Pick the days before expiry you want an email."
+      >
+        <ReminderDaysForm initialDays={reminders.days} migrated={reminders.migrated} />
+      </SettingsSection>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Notification Recipients</CardTitle></CardHeader>
-        <CardContent>
-          <RecipientsForm recipients={recipients} />
-        </CardContent>
-      </Card>
+      <SettingsSection
+        id="email"
+        icon={Mail}
+        color="var(--info)"
+        title="Email reminders"
+        description="Everything email needs, and a way to test it right now."
+      >
+        <EmailSetupCard checks={getEmailSetupChecks()} email={email} />
+      </SettingsSection>
 
-      <Card>
-        <CardHeader><CardTitle className="text-base">Storage</CardTitle></CardHeader>
-        <CardContent>
+      <SettingsSection
+        icon={Users}
+        color="var(--success)"
+        title="Who gets reminders"
+        description="Add family members so they're reminded too."
+      >
+        <RecipientsForm recipients={recipients} accountEmail={email} />
+      </SettingsSection>
+
+      <SettingsSection icon={Palette} color="var(--brand-2)" title="Appearance">
+        <ThemePicker />
+      </SettingsSection>
+
+      <SettingsSection icon={HardDrive} color="var(--brand-3)" title="Storage">
+        <div className="space-y-2">
+          <div className="h-2.5 w-full overflow-hidden rounded-full bg-muted">
+            <div className="h-full rounded-full bg-brand" style={{ width: `${Math.max(storagePercent, 1)}%` }} />
+          </div>
           <p className="text-sm text-muted-foreground">
-            {formatBytes(storageUsedBytes)} / {formatBytes(DISPLAY_QUOTA_BYTES)} used
+            {formatBytes(storageUsedBytes)} of {formatBytes(DISPLAY_QUOTA_BYTES)} used
           </p>
-        </CardContent>
-      </Card>
+        </div>
+      </SettingsSection>
+
+      <SettingsSection icon={UserRound} color="var(--primary)" title="Account" description={`Signed in as ${email}`}>
+        <LogoutButton className="bg-destructive/10 text-destructive" />
+      </SettingsSection>
     </div>
   );
 }

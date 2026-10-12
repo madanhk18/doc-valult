@@ -1,40 +1,58 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { FileText } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
-import { StatusBadge } from "./status-badge";
+import { ChevronRight } from "lucide-react";
+import { StatusBadge, STATUS_COLOR } from "./status-badge";
+import { DocTypeIcon } from "./doc-type-icon";
+import { DaysLeftBar, daysLeftText } from "./days-left";
 import type { DocumentWithStatus } from "@/lib/queries/documents";
 
 export function DocumentCard({ document }: { document: DocumentWithStatus }) {
-  const daysLabel =
-    document.daysRemaining === null
-      ? null
-      : document.daysRemaining < 0
-        ? `Expired ${Math.abs(document.daysRemaining)} days ago`
-        : `${document.daysRemaining} day${document.daysRemaining === 1 ? "" : "s"} remaining`;
-
   return (
-    <Link href={`/documents/${document.id}`}>
-      <Card className="h-full transition-shadow hover:shadow-md">
-        <CardContent className="flex flex-col gap-3 p-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-2">
-              <FileText className="size-5 text-muted-foreground" />
-              <div>
-                <div className="font-medium">{document.name}</div>
-                <div className="text-xs text-muted-foreground">{document.type}</div>
-              </div>
-            </div>
-            <StatusBadge status={document.status} />
-          </div>
+    <Link
+      href={`/documents/${document.id}`}
+      className="group flex h-full flex-col gap-4 rounded-3xl border border-border bg-card p-4 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md"
+    >
+      <div className="flex items-start gap-3">
+        <DocTypeIcon type={document.type} />
+        <div className="min-w-0 flex-1">
+          <p className="truncate font-semibold">{document.name}</p>
+          <p className="truncate text-xs text-muted-foreground">{document.type}</p>
+        </div>
+        <StatusBadge status={document.status} />
+      </div>
+
+      <div className="mt-auto space-y-2">
+        <div className="flex items-baseline justify-between gap-2 text-sm">
+          <span className="font-semibold" style={{ color: STATUS_COLOR[document.status] }}>
+            {daysLeftText(document.daysRemaining)}
+          </span>
           {document.expiry_date && (
-            <div className="text-sm text-muted-foreground">
-              Expires: {format(new Date(document.expiry_date), "dd MMM yyyy")}
-            </div>
+            <span className="text-xs text-muted-foreground">
+              {format(new Date(document.expiry_date), "dd MMM yyyy")}
+            </span>
           )}
-          {daysLabel && <div className="text-sm font-medium">{daysLabel}</div>}
-        </CardContent>
-      </Card>
+        </div>
+        <DaysLeftBar daysRemaining={document.daysRemaining} status={document.status} />
+      </div>
+    </Link>
+  );
+}
+
+/** Compact one-line row for lists inside a card. */
+export function DocumentRow({ document }: { document: DocumentWithStatus }) {
+  return (
+    <Link
+      href={`/documents/${document.id}`}
+      className="flex items-center gap-3 rounded-2xl px-2 py-2.5 transition-colors hover:bg-accent"
+    >
+      <DocTypeIcon type={document.type} size="sm" />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-sm font-semibold">{document.name}</p>
+        <p className="truncate text-xs font-medium" style={{ color: STATUS_COLOR[document.status] }}>
+          {daysLeftText(document.daysRemaining)}
+        </p>
+      </div>
+      <ChevronRight className="size-4 shrink-0 text-muted-foreground" />
     </Link>
   );
 }
